@@ -1,0 +1,121 @@
+#!/usr/bin/env node
+
+var split = require('split')
+var isJson = require('is-json')
+var moment = require('moment')
+var options = parseArgv(process.argv)
+var clc = require('cli-color')
+
+// If help flag is set, print help text and exit.
+if (options.hasOwnProperty('help')) {
+  console.log('./push')
+  console.log('  --id <thing id> Example: weather_station1')
+  console.log('  --user <user name> Example: admin')
+  console.log('  --password <password> Example: mysecretpassword')
+  console.log('  --url <password> Example: thing.pantheon.io')
+  console.log('  --verbose Use for debug output')
+  console.log('')
+  console.log('Usage: echo 42 | ./push --id temperature_probe1 --user admin --password mysecretpassword --url thing.pantheon.io')
+  console.log('Usage: echo \'{"temperature":89, "humidity":.4, "luminosity":.8}\' | ./push --id weather_station1 --user admin --password mysecretpassword --url thing.pantheon.io')
+  console.log('')
+  process.exit(0)
+}
+
+// Output any errors we receive from the pipe.
+process.stdin.on('error', function(e) {
+  console.log("error: "+e)
+})
+
+// As we get data in on the pipe, concatenate it onto data until a new line is detected at which point we push the data.
+var data 
+process.stdin.pipe(split())
+  .on('data', function (line) {
+    data = line
+    if (data !== '')
+      console.log(data)
+      push(data)
+  })
+
+// When we detect the process piping to this cli has exited, exitSignal is set to true and we also exit this process after sending data. 
+var exitSignal = false
+process.stdin.on('end', function() {
+  exitSignal = true 
+})
+
+function push(data) {
+
+  if (data == '') return
+
+  var options = parseArgv(process.argv)
+  console.log(options)
+
+  log('data:')
+  log(data)
+  log(options)
+
+  var doc 
+  var jsonFormatted = isJson(data)
+  if (jsonFormatted === true) {
+    doc = JSON.parse(data)
+  } 
+  else {
+    doc = {'value': data}
+  }
+  doc.id = options.id
+  log('doc:')
+  log(doc)
+
+  var request = require('request')
+  var url = require('url')
+
+  options.url = url.parse(options.url)
+  console.log(options.url)
+
+  var requestOptions = {
+    uri: options.url.protocol + '//' + options.user + ':' + options.password + '@' + options.url.host + '/api/thing',
+    method: 'POST',
+    json: doc
+  }
+
+  log('requestOptions:')
+  log(requestOptions)
+
+  request(requestOptions, function (error, response, body) {
+    log(error)
+    log(response)
+    if (!error && response.statusCode == 200) {
+    }
+  }) 
+
+}
+
+// This is the standard function for parsing process.argv. It will return
+// an object that where `--argumentName` is a property name and the
+// proceding argument is the value. If there is no proceeding value then
+// it will be interpreted as a boolean true.
+// @todo Consider argv-ee
+function parseArgv(argv) {
+  params = {}
+  argv.forEach(function(arg, i) {
+    if (arg.substr(0, 2) == '--') {
+      paramName = arg.substr(2, arg.length)
+      nextArg = argv[i+1]
+      if ((typeof nextArg == 'string' && nextArg.substr(0, 2) == '--') || nextArg == undefined) {
+        params[paramName] = true
+      }
+      else {
+        params[paramName] = nextArg
+      }
+    }
+  })
+  return params
+}
+
+// A log function that will only log if the --verbose flag is set
+function log(msg) {
+  if (typeof msg == 'object') msg = JSON.stringify(msg)
+  if (params.hasOwnProperty('verbose')) {
+    console.log(clc.red(msg))
+  }
+}
+

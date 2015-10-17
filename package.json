@@ -1,0 +1,35 @@
+{
+  "name": "opk-cli--drupal-thing",
+  "version": "0.0.0",
+  "description": "Command line client for pushing data to Drupal Thing API",
+  "main": "push",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "cli-color": "^1.0.0",
+    "is-json": "^1.2.5",
+    "moment": "^2.10.6",
+    "nano": "^6.1.5",
+    "request": "^2.64.0",
+    "split": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "push"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openpipekit/opk-cli--drupal-thing.git"
+  },
+  "keywords": [
+    "iot",
+    "adafruit"
+  ],
+  "author": "R.J. Steinert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/openpipekit/opk-cli--drupal-thing/issues"
+  },
+  "homepage": "https://github.com/openpipekit/opk-cli--drupal-thing#readme"
+}

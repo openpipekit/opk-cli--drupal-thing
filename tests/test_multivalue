@@ -1,0 +1,1 @@
+echo '{"s1":33,"s2":44}' | ./push --id opk2 --user user1 --password password --url http://dev-thing.pantheon.io --verbose

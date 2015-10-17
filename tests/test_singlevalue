@@ -1,0 +1,1 @@
+echo '42' | ./push --id opk5 --user user1 --password password --url http://dev-thing.pantheon.io --verbose
