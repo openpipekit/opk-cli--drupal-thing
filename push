@@ -5,6 +5,7 @@ var isJson = require('is-json')
 var moment = require('moment')
 var options = parseArgv(process.argv)
 var clc = require('cli-color')
+var child_process = require('child_process')
 
 // If help flag is set, print help text and exit.
 if (options.hasOwnProperty('help')) {
@@ -65,27 +66,20 @@ function push(data) {
   log('doc:')
   log(doc)
 
-  var request = require('request')
   var url = require('url')
 
   options.url = url.parse(options.url)
-  console.log(options.url)
 
-  var requestOptions = {
-    uri: options.url.protocol + '//' + options.user + ':' + options.password + '@' + options.url.host + '/api/thing',
-    method: 'POST',
-    json: doc
-  }
+  var destination = options.url.protocol + '//' + options.user + ':' + options.password + '@' + options.url.host + '/api/thing'
+  var cmd = 'curl -XPOST ' + destination + ' -d \'' + JSON.stringify(doc) + '\''
+  log('cmd:')
+  log(cmd)
 
-  log('requestOptions:')
-  log(requestOptions)
-
-  request(requestOptions, function (error, response, body) {
-    log(error)
-    log(response)
-    if (!error && response.statusCode == 200) {
-    }
-  }) 
+  child_process.exec(cmd, function(err, stdout, stderr) {
+    if (err) console.log(err)
+    if (stderr) console.log(stderr)
+    log(stdout)
+  })
 
 }
 

@@ -10,8 +10,6 @@
     "cli-color": "^1.0.0",
     "is-json": "^1.2.5",
     "moment": "^2.10.6",
-    "nano": "^6.1.5",
-    "request": "^2.64.0",
     "split": "^1.0.0"
   },
   "devDependencies": {},
