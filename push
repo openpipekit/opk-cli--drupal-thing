@@ -2,9 +2,7 @@
 
 var split = require('split')
 var isJson = require('is-json')
-var moment = require('moment')
 var options = parseArgv(process.argv)
-var clc = require('cli-color')
 var child_process = require('child_process')
 
 // If help flag is set, print help text and exit.
@@ -109,7 +107,7 @@ function parseArgv(argv) {
 function log(msg) {
   if (typeof msg == 'object') msg = JSON.stringify(msg)
   if (params.hasOwnProperty('verbose')) {
-    console.log(clc.red(msg))
+    console.log(msg)
   }
 }
 
